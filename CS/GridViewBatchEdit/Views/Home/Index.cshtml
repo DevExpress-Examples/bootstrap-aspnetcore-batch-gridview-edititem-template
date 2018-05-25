@@ -1,0 +1,8 @@
+@model List<GridDataItem>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<script src="~/js/grid.js"></script>
+
+@Html.Partial("GridViewPartial", Model)

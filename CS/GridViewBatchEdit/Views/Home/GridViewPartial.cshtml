@@ -1,0 +1,29 @@
+﻿@model List<GridDataItem>
+
+@(Html.DevExpress().BootstrapGridView<GridDataItem>("gridView")
+    .KeyFieldName(m => m.Id)
+    .Columns(columns => {
+    columns.AddCommandColumn().ShowNewButtonInHeader(true).ShowEditButton(true).ShowDeleteButton(true).Width(100);
+    columns.Add(m => m.Id).ReadOnly(true).SortIndex(0).SortOrder(DevExpress.Data.ColumnSortOrder.Descending);
+    columns.Add(m => m.Name);
+    columns.Add(m => m.Price).EditItemTemplate(t => @<text>
+            @(Html.DevExpress().BootstrapSpinEdit("priceSpinEdit")
+                        .ClientSideEvents(clientSideEvents => clientSideEvents.KeyDown("onKeyDown").LostFocus("onLostFocus")))
+            </text>); ;
+    })
+    .ClientSideEvents(clientSideEvents => clientSideEvents
+        .BatchEditStartEditing("onBatchEditStartEditing")
+        .BatchEditEndEditing("onBatchEditEndEditing")
+        .BatchEditRowValidating("onBatchEditRowValidating"))
+    .SettingsEditing(settingsEditing => settingsEditing.Mode(GridViewEditingMode.Batch))
+    .EditErrorText(ViewData["Error"]?.ToString())
+    .Routes(routes => routes
+        .MapRoute(r => r
+            .RouteType(GridViewRouteType.Default)
+            .Action("GridViewPartial")
+            .Controller("Home"))
+        .MapRoute(r => r
+            .RouteType(GridViewRouteType.BatchUpdate)
+            .Action("GridViewBatchUpdate")
+            .Controller("Home")))
+    .Bind(Model))
